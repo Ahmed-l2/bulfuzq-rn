@@ -26,6 +26,7 @@
   "ios": {
     "icon": "./assets/images/app-icon-ios.png",
     "supportsTablet": true,
+    "usesAppleSignIn": true,
     "bundleIdentifier": "com.bulfuzqrn"
   },
   "web": {
@@ -61,6 +62,9 @@
   "extra": {
     "ignite": {
       "version": "UNKNOWN"
+    },
+    "eas": {
+      "projectId": "45bc0d48-c753-4799-9b0a-de09b296d3b5"
     }
   }
 }

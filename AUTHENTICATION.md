@@ -15,6 +15,10 @@ React Native app
 
 The mobile app signs users in with Clerk Expo. After sign-in, the app receives a Clerk session. Mobile API requests must include a Clerk token in the `Authorization: Bearer <token>` header. Website API routes validate that token with Clerk, then call the existing backend service layer. Supabase service-role access remains server-only inside the website/backend.
 
+Sign-in supports Clerk-required additional verification. If Clerk returns `needs_first_factor` or `needs_second_factor`, the app prepares and submits supported code factors inline instead of stopping at an incomplete sign-in state. Supported code factors are email code, phone code, authenticator app code, and backup code.
+
+Social sign-in uses Clerk Expo SSO for Google and Apple. These providers must be enabled in the shared Clerk dashboard, and redirect URLs must allow the Expo app scheme `bulfuzq-rn://` for native development builds. iOS native builds declare `usesAppleSignIn` in `app.json`.
+
 ## Token Storage
 
 Clerk session tokens are cached through Expo SecureStore via the Clerk Expo token cache. Tokens must not be stored in MMKV, AsyncStorage, plain files, logs, or app state beyond the Clerk SDK session lifecycle.
@@ -53,5 +57,7 @@ Token refresh is handled by Clerk. API clients should request the current token 
 
 - Mobile and website must use the same Clerk instance.
 - Mobile must use the same Clerk publishable key as the website environment for the target deployment.
+- The app reads the key from `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY`, falling back to `app/config/config.dev.ts` or `app/config/config.prod.ts` for the current Ignite environment.
+- Google and Apple sign-in must remain configured in Clerk, not implemented as separate mobile-only identity providers.
 - Supabase membership records continue to use Clerk user IDs.
 - No mobile-specific user table or parallel authentication system should be created.

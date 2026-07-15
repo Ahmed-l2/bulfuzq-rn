@@ -7,4 +7,5 @@
  */
 export default {
   API_URL: "http://localhost:3000/api/mobile/v1",
+  EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_live_Y2xlcmsuYnVsZnV6cS5jb20k",
 }

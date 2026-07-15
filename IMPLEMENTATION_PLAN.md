@@ -210,8 +210,10 @@ Integrate Clerk Expo authentication against the same Clerk instance as the websi
 * [x] Fake AuthContext remains removed.
 * [x] Navigation depends on Clerk auth state.
 * [x] Sign-in/sign-up/sign-out screens implemented through Clerk Expo.
+* [x] Sign-in handles Clerk-required additional code verification instead of stopping on incomplete status.
+* [x] Clerk SSO buttons added for Google and Apple sign-in.
 * [x] Missing Clerk publishable key state handled without crashing local builds.
-* [x] Clerk publishable key is read from `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` so mobile can target the same Clerk instance as the website.
+* [x] Clerk publishable key is read from `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY`, with fallback to Ignite config, so mobile can target the same Clerk instance as the website.
 * [x] TypeScript passes with `pnpm run compile`.
 * [x] Lint passes with `pnpm run lint:check`.
 * [x] Web export passes with `pnpm run bundle:web`.
