@@ -12,46 +12,45 @@ Create a new section near the top called:
 
 ## Architecture Principles
 
-- Website remains the single backend and source of truth.
-- React Native is another client of the website.
+- Website is a read-only reference implementation unless explicitly requested otherwise.
+- React Native communicates directly with Supabase using Clerk authentication.
 - Business logic must never be duplicated.
-- Server Actions and Mobile APIs must share the same underlying service layer.
-- Every new API endpoint must call reusable services instead of implementing its own logic.
+- Existing website code provides database schema, business rules, Supabase query, and UI/UX reference only.
+- Mobile Supabase services must reuse the shared data model and shared business rules.
 - Authentication belongs exclusively to Clerk.
-- Membership calculations belong exclusively to the server.
-- Supabase service-role keys must never leave the backend.
+- Membership calculations belong in typed React Native Supabase services and must follow existing business rules.
+- Supabase service-role keys must never be used in the mobile app.
 - Mobile contains presentation logic only.
-- APIs should be reusable by future web, admin and mobile clients.
+- All mobile data access must respect existing Supabase Row Level Security policies.
 
 ---
 
-# 2. Shared Backend Service Layer
+# 2. Supabase Service Layer
 
-Before creating any new API endpoints, create a reusable backend service layer.
+Create a typed Supabase data access layer inside the React Native application. The website repository is read-only and must only be used as reference unless explicitly requested otherwise.
 
 Suggested structure:
 
 ```text
-lib/
+app/
     services/
-        membership/
-        news/
-        events/
-        offers/
-        sponsors/
-        support/
-        notifications/
-        images/
-````
+        supabase/
+            membership.ts
+            events.ts
+            offers.ts
+            sponsors.ts
+            news.ts
+            support.ts
+```
 
 ### Completion Checklist
 
-* [ ] Shared service layer created.
-* [ ] Existing Server Actions refactored to use shared services.
-* [ ] Mobile API routes use shared services.
-* [ ] No duplicated Supabase queries.
+* [x] Supabase service layer created inside React Native.
+* [x] Existing website queries audited without modifying the website for membership, news, events, offers, and sponsors.
+* [ ] React Native services mirror reusable Supabase queries. Membership, news, events, offers, and sponsors are mirrored.
+* [ ] No duplicated business rules beyond the required mobile service implementation. Membership active/expiry logic is mirrored from the website reference.
 * [ ] No duplicated business logic.
-* [ ] Existing website behavior remains unchanged.
+* [x] Existing website repository remains unchanged.
 
 Architecture:
 
@@ -59,24 +58,7 @@ Architecture:
 React Native
       │
       ▼
-API Route
-      │
-      ▼
-Shared Service
-      │
-      ▼
-Supabase
-```
-
-Website:
-
-```text
-Website
-      │
-Server Action
-      │
-      ▼
-Shared Service
+Clerk Authentication
       │
       ▼
 Supabase
@@ -84,33 +66,34 @@ Supabase
 
 ---
 
-# 3. Shared API Contract Layer
+# 3. Shared Data Contract Layer
 
-Create a shared API contract layer.
+Create shared data contracts for React Native Supabase services.
 
 Suggested structure:
 
 ```text
-lib/
-    mobile/
-        schemas/
-        responses/
-        types/
+app/
+    services/
+        supabase/
+            schemas/
+            responses/
+            types/
 ```
 
 Use Zod for:
 
-* Request validation
-* Response validation
+* Query input validation
+* Supabase response validation
 * Shared types
 
 ### Completion Checklist
 
-* [ ] Shared schemas created.
-* [ ] Shared response types created.
-* [ ] Zod validation implemented.
-* [ ] Mobile endpoints return typed responses.
-* [ ] API contracts are versioned.
+* [x] Shared schemas created inside the React Native app for membership, news, events, offers, and sponsors.
+* [x] Shared response types created inside the React Native app for membership, news, events, offers, and sponsors.
+* [x] Zod validation implemented for initial Supabase service responses.
+* [x] Supabase service modules return typed responses for initial data slices.
+* [x] Data contracts follow the shared Supabase schema from `schema.json` for initial data slices.
 
 ---
 
@@ -188,9 +171,9 @@ Integrate Clerk Expo authentication against the same Clerk instance as the websi
 * `/home/shika/bulfuzq-rn/package.json`
 * `/home/shika/bulfuzq-rn/pnpm-lock.yaml`
 
-### API Endpoints Involved
+### Data Access Involved
 
-* None. Backend API authentication starts in Phase 3.
+* None. Supabase data access starts in Phase 3.
 
 ### Database Changes
 
@@ -234,35 +217,56 @@ Integrate Clerk Expo authentication against the same Clerk instance as the websi
 
 ---
 
-# 5. Update Phase 3
+# 5. Phase 3 — Supabase Data Access Layer
 
-Replace the objective with:
+## Objective
 
-> Build a reusable backend service layer first, then expose versioned APIs that reuse those services.
+Build a shared Supabase data access layer inside the React Native app while reusing the existing database schema and business rules.
 
-Before creating any endpoint:
+Before creating any service:
 
-* Search existing Server Actions.
+* Audit existing website queries.
 * Search existing helpers.
 * Search existing Supabase logic.
-* Extract shared logic whenever possible.
+* Mirror reusable queries inside React Native services.
+* Keep the website repository unchanged.
 
 Never duplicate business logic.
 
 ### Completion Checklist
 
-* [ ] Existing logic audited before new code.
-* [ ] Shared services extracted where needed.
-* [ ] APIs consume shared services only.
-* [ ] No duplicated membership logic.
+* [x] Audit existing website queries for the initial membership/content slices.
+* [ ] Mirror reusable queries inside React Native services. Membership, news, events, offers, and sponsors queries mirrored.
+* [x] Keep the website repository unchanged.
+* [x] Create typed Supabase service modules. Initial `app/services/supabase/` module added.
+* [x] Reuse existing Clerk authentication. Initial Supabase client uses Clerk's session token through Supabase's `accessToken` option.
+* [x] Ensure all queries respect Row Level Security. Initial membership service filters by authenticated Clerk `userId`; content services rely on RLS-visible rows.
+
+### Phase 3 Progress Notes
+
+* Previous website data-access changes were removed after the architecture update.
+* Website repository is now read-only reference material unless explicitly requested otherwise.
+* Added public Supabase config to mobile config using the website reference implementation's public URL and anon key.
+* Added dependencies: `@supabase/supabase-js`, `react-native-url-polyfill`, and `zod`.
+* Removed unused Ignite network client files.
+* Added typed Supabase foundation under `app/services/supabase/`.
+* Added initial dashboard-oriented membership service in `app/services/supabase/membership.ts`.
+* Wired `HomeScreen` to load membership summary with Clerk's current session token.
+* Fixed membership scoping so registration lookup filters by authenticated Clerk `userId`.
+* Added typed Supabase services for `membership_news`, `member_events`, `partner_offers`, and `sponsors`.
+* Added Zod schemas and response types for membership, news, events, offers, and sponsors.
+* `pnpm run compile` passes after the content service additions.
+* `pnpm run lint:check` passes after the content service additions.
+* `pnpm run bundle:web` passes after the content service additions.
+* Generated `dist/` directory was removed after verification.
 
 ---
 
-# 6. Membership API
+# 6. Membership Supabase Service
 
-Replace the simple membership endpoint.
+Create a dashboard-oriented membership Supabase service inside React Native.
 
-Return a dashboard-oriented response.
+Return a dashboard-oriented data shape.
 
 Example:
 
@@ -282,13 +286,14 @@ Example:
 }
 ```
 
-The React Native app must never calculate membership status.
+The React Native app must follow the existing membership business rules from the website reference implementation and rely on Supabase RLS for user isolation.
 
 ### Completion Checklist
 
-* [ ] Membership endpoint returns computed data.
-* [ ] Dashboard requires minimal API calls.
-* [ ] Membership calculations occur only on the server.
+* [x] Membership service returns computed data. Initial service returns member, membership, quick actions, and renewal fields.
+* [x] Dashboard requires minimal Supabase queries. Initial service uses latest registration plus latest PayPal/UPay subscription checks.
+* [x] Membership calculations follow existing business rules. Initial active/expiry logic mirrors the website reference implementation.
+* [x] Queries respect Supabase Row Level Security. Initial service filters by Clerk auth `userId` instead of UI-provided identity.
 
 ---
 
@@ -317,7 +322,7 @@ Do not cache:
 * [ ] React Query configured.
 * [ ] MMKV persistence configured.
 * [ ] Offline cache implemented.
-* [ ] Sensitive endpoints excluded from persistence.
+* [ ] Sensitive data operations excluded from persistence.
 
 ---
 
@@ -416,7 +421,7 @@ Do not couple the application directly to OneSignal.
 
 Create a NotificationService abstraction.
 
-Backend table:
+Supabase table:
 
 ```text
 push_devices
@@ -431,21 +436,14 @@ created_at
 updated_at
 ```
 
-Endpoints:
-
-```text
-POST   /api/mobile/v1/push-device
-DELETE /api/mobile/v1/push-device
-```
-
 ### Completion Checklist
 
 * [ ] OneSignal SDK integrated.
 * [ ] NotificationService abstraction created.
 * [ ] Device registration implemented.
 * [ ] Device removal implemented.
-* [ ] Backend table created.
-* [ ] API endpoints implemented.
+* [ ] Supabase table created.
+* [ ] Supabase device registration service implemented.
 * [ ] OneSignal Player ID linked to Clerk member.
 * [ ] Push notifications verified.
 
@@ -455,7 +453,7 @@ DELETE /api/mobile/v1/push-device
 
 Create an image service.
 
-The backend should always return complete image URLs.
+The Supabase service layer should always return complete image URLs.
 
 The mobile app should never know:
 
@@ -466,7 +464,7 @@ The mobile app should never know:
 ### Completion Checklist
 
 * [ ] Image service created.
-* [ ] Backend returns usable URLs.
+* [ ] Supabase services return usable URLs.
 * [ ] App contains no storage-specific logic.
 
 ---
@@ -515,7 +513,7 @@ Expected work:
 ### Completion Checklist
 
 * [ ] Database designed.
-* [ ] Backend APIs implemented.
+* [ ] Supabase services implemented.
 * [ ] Profile editing completed.
 * [ ] Upload flow completed.
 * [ ] Admin management supported.
@@ -554,8 +552,14 @@ Append the following rules.
 * Keep files focused and small.
 * Prefer composition over duplication.
 * Avoid unnecessary abstractions.
-* Every API must be typed.
+* Every Supabase service must be typed.
 * Every feature must update `IMPLEMENTATION_PLAN.md`.
+* The website repository is read-only unless explicitly instructed otherwise.
+* Before modifying the website, stop and request confirmation.
+* Prefer direct Supabase access over creating website data routes.
+* The mobile application should contain its own typed data service layer.
+* Reuse the existing database schema without modifying the website implementation.
+* Respect existing Supabase Row Level Security policies.
 * Every phase must finish with:
 
   * [ ] Compile passes.
