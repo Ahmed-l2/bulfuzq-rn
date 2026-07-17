@@ -146,6 +146,29 @@ export type Sponsor = {
   display_order: number
 }
 
+export type UserRole = {
+  id: string
+  clerk_user_id: string
+  role: DatabaseAppRole
+  is_active: boolean
+  metadata: Json
+  created_at: string
+  updated_at: string
+}
+
+export type PushDevice = {
+  id: string
+  member_id: string
+  platform: string
+  one_signal_player_id: string
+  app_version: string | null
+  last_seen: string
+  created_at: string
+  updated_at: string
+}
+
+export type DatabaseAppRole = "member" | "merchant" | "admin" | "staff"
+
 export type Database = {
   public: {
     Tables: {
@@ -195,6 +218,18 @@ export type Database = {
         Row: Sponsor
         Insert: Partial<Sponsor>
         Update: Partial<Sponsor>
+        Relationships: []
+      }
+      user_roles: {
+        Row: UserRole
+        Insert: Partial<UserRole>
+        Update: Partial<UserRole>
+        Relationships: []
+      }
+      push_devices: {
+        Row: PushDevice
+        Insert: Partial<PushDevice>
+        Update: Partial<PushDevice>
         Relationships: []
       }
     }

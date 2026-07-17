@@ -17,7 +17,7 @@ import { Text, TextProps } from "./Text"
 
 type Presets = "default" | "reversed"
 
-interface CardProps extends TouchableOpacityProps {
+export interface CardProps extends TouchableOpacityProps {
   /**
    * One of the different types of text presets.
    */
@@ -123,7 +123,6 @@ interface CardProps extends TouchableOpacityProps {
 /**
  * Cards are useful for displaying related information in a contained way.
  * If a ListItem displays content horizontally, a Card can be used to display content vertically.
- * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/app/components/Card/}
  * @param {CardProps} props - The props for the `Card` component.
  * @returns {JSX.Element} The rendered `Card` component.
  */
@@ -257,13 +256,7 @@ export function Card(props: CardProps) {
 
 const $containerBase: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
-  padding: theme.spacing.xs,
-  borderWidth: 1,
-  shadowColor: theme.colors.palette.neutral800,
-  shadowOffset: { width: 0, height: 12 },
-  shadowOpacity: 0.08,
-  shadowRadius: 12.81,
-  elevation: 16,
+  padding: theme.spacing.sm,
   minHeight: 96,
 })
 

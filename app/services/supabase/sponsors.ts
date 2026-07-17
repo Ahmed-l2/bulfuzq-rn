@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { resolveImageIdentifier } from "@/services/images"
+
 import { createAuthenticatedSupabaseClient, GetClerkSupabaseToken } from "./client"
 
 export const sponsorSchema = z.object({
@@ -27,5 +29,7 @@ export async function getSponsors(
     .order("display_order", { ascending: true })
 
   if (error) throw error
-  return sponsorsSchema.parse(data ?? [])
+  return sponsorsSchema
+    .parse(data ?? [])
+    .map((item) => ({ ...item, icon: resolveImageIdentifier(item.icon) }))
 }

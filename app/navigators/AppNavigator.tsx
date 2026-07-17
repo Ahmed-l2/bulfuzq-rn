@@ -9,11 +9,15 @@ import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import Config from "@/config"
+import { AccountScreen } from "@/screens/AccountScreen"
 import { ErrorBoundary } from "@/screens/ErrorScreen/ErrorBoundary"
 import { HomeScreen } from "@/screens/HomeScreen"
 import { LoadingScreen } from "@/screens/LoadingScreen"
+import { MerchantHomeScreen } from "@/screens/MerchantHomeScreen"
+import { RoleSelectionScreen } from "@/screens/RoleSelectionScreen"
 import { SignInScreen } from "@/screens/SignInScreen"
 import { SignUpScreen } from "@/screens/SignUpScreen"
+import { useRole } from "@/services/roles"
 import { useAppTheme } from "@/theme/context"
 
 import type { AppStackParamList, NavigationProps } from "./navigationTypes"
@@ -30,11 +34,12 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = () => {
   const { isLoaded, isSignedIn } = useAuth()
+  const { activeRole, availableRoles, isLoadingRoles } = useRole()
   const {
     theme: { colors },
   } = useAppTheme()
 
-  if (!isLoaded) return <LoadingScreen />
+  if (!isLoaded || (isSignedIn && isLoadingRoles)) return <LoadingScreen />
 
   return (
     <Stack.Navigator
@@ -47,7 +52,7 @@ const AppStack = () => {
       }}
     >
       {isSignedIn ? (
-        <Stack.Screen name="Home" component={HomeScreen} />
+        getRoleScreens(activeRole, availableRoles.length)
       ) : (
         <>
           <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -55,6 +60,32 @@ const AppStack = () => {
         </>
       )}
     </Stack.Navigator>
+  )
+}
+
+function getRoleScreens(activeRole: ReturnType<typeof useRole>["activeRole"], roleCount: number) {
+  if (!activeRole || roleCount === 0) {
+    return <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} />
+  }
+
+  if (activeRole === "merchant") {
+    return (
+      <>
+        <Stack.Screen name="MerchantHome" component={MerchantHomeScreen} />
+        <Stack.Screen name="Account" component={AccountScreen} />
+      </>
+    )
+  }
+
+  if (activeRole !== "member") {
+    return <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} />
+  }
+
+  return (
+    <>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Account" component={AccountScreen} />
+    </>
   )
 }
 

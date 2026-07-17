@@ -6,7 +6,9 @@ export const env = {
   supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL ?? Config.EXPO_PUBLIC_SUPABASE_URL,
   supabaseAnonKey:
     process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? Config.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+  oneSignalAppId: process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID ?? Config.EXPO_PUBLIC_ONESIGNAL_APP_ID,
 }
 
 export const hasClerkPublishableKey = Boolean(env.clerkPublishableKey)
 export const hasSupabaseConfig = Boolean(env.supabaseUrl && env.supabaseAnonKey)
+export const hasOneSignalConfig = Boolean(env.oneSignalAppId)

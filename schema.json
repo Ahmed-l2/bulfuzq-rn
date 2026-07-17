@@ -1122,6 +1122,17 @@
     "foreign_column_name": null
   },
   {
+    "table_name": "bul_garage",
+    "ordinal_position": 20,
+    "column_name": "order_number",
+    "data_type": "integer",
+    "is_nullable": "NO",
+    "column_default": "0",
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
     "table_name": "bul_performance_cars",
     "ordinal_position": 1,
     "column_name": "id",
@@ -7692,6 +7703,83 @@
     "table_name": "upay_subscription_email_reminders",
     "ordinal_position": 7,
     "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()",
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 1,
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()",
+    "is_primary_key": "YES",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 2,
+    "column_name": "user_id",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null,
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 3,
+    "column_name": "role",
+    "data_type": "text",
+    "is_nullable": "NO",
+    "column_default": null,
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 4,
+    "column_name": "is_active",
+    "data_type": "boolean",
+    "is_nullable": "NO",
+    "column_default": "true",
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 5,
+    "column_name": "metadata",
+    "data_type": "jsonb",
+    "is_nullable": "NO",
+    "column_default": "'{}'::jsonb",
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 6,
+    "column_name": "created_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "now()",
+    "is_primary_key": "NO",
+    "foreign_table_name": null,
+    "foreign_column_name": null
+  },
+  {
+    "table_name": "user_roles",
+    "ordinal_position": 7,
+    "column_name": "updated_at",
     "data_type": "timestamp with time zone",
     "is_nullable": "NO",
     "column_default": "now()",

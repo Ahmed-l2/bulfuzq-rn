@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { resolveImageUrl } from "@/services/images"
+
 import { createAuthenticatedSupabaseClient, GetClerkSupabaseToken } from "./client"
 
 export const partnerOfferSchema = z.object({
@@ -30,7 +32,9 @@ export async function getPartnerOffers(
     .order("valid_until", { ascending: true })
 
   if (error) throw error
-  return partnerOffersSchema.parse(data ?? [])
+  return partnerOffersSchema
+    .parse(data ?? [])
+    .map((item) => ({ ...item, logo_url: resolveImageUrl(item.logo_url) }))
 }
 
 export async function getPartnerOfferById(
@@ -45,5 +49,8 @@ export async function getPartnerOfferById(
     .maybeSingle()
 
   if (error) throw error
-  return data ? partnerOfferSchema.parse(data) : null
+  if (!data) return null
+
+  const item = partnerOfferSchema.parse(data)
+  return { ...item, logo_url: resolveImageUrl(item.logo_url) }
 }

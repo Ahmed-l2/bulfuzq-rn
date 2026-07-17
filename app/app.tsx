@@ -20,7 +20,6 @@ import "./utils/gestureHandler"
 
 import { useEffect, useState } from "react"
 import { useFonts } from "expo-font"
-import * as Linking from "expo-linking"
 import * as WebBrowser from "expo-web-browser"
 import { ClerkProvider } from "@clerk/clerk-expo"
 import { KeyboardProvider } from "react-native-keyboard-controller"
@@ -29,9 +28,13 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 import { env, hasClerkPublishableKey } from "./config/env"
 import { initI18n } from "./i18n"
 import { AppNavigator } from "./navigators/AppNavigator"
+import { linking } from "./navigators/linking"
 import { useNavigationPersistence } from "./navigators/navigationUtilities"
 import { MissingAuthConfigScreen } from "./screens/MissingAuthConfigScreen"
 import { clerkTokenCache } from "./services/auth/clerkTokenCache"
+import { NotificationBootstrap } from "./services/notifications"
+import { AppQueryProvider } from "./services/query"
+import { RoleProvider } from "./services/roles"
 import { ThemeProvider } from "./theme/context"
 import { customFontsToLoad } from "./theme/typography"
 import { loadDateFnsLocale } from "./utils/formatDate"
@@ -40,18 +43,6 @@ import * as storage from "./utils/storage"
 WebBrowser.maybeCompleteAuthSession()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
-
-// Web linking configuration
-const prefix = Linking.createURL("/")
-const config = {
-  screens: {
-    SignIn: {
-      path: "",
-    },
-    SignUp: "sign-up",
-    Home: "home",
-  },
-}
 
 /**
  * This is the root component of our app.
@@ -84,11 +75,6 @@ export function App() {
     return null
   }
 
-  const linking = {
-    prefixes: [prefix],
-    config,
-  }
-
   if (!hasClerkPublishableKey) {
     return (
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
@@ -106,13 +92,18 @@ export function App() {
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <KeyboardProvider>
         <ClerkProvider publishableKey={env.clerkPublishableKey ?? ""} tokenCache={clerkTokenCache}>
-          <ThemeProvider>
-            <AppNavigator
-              linking={linking}
-              initialState={initialNavigationState}
-              onStateChange={onNavigationStateChange}
-            />
-          </ThemeProvider>
+          <AppQueryProvider>
+            <RoleProvider>
+              <ThemeProvider>
+                <NotificationBootstrap />
+                <AppNavigator
+                  linking={linking}
+                  initialState={initialNavigationState}
+                  onStateChange={onNavigationStateChange}
+                />
+              </ThemeProvider>
+            </RoleProvider>
+          </AppQueryProvider>
         </ClerkProvider>
       </KeyboardProvider>
     </SafeAreaProvider>

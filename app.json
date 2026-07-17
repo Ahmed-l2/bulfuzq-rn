@@ -1,7 +1,10 @@
 {
   "name": "bulfuzq-rn",
   "slug": "bulfuzq-rn",
-  "scheme": "bulfuzq-rn",
+  "scheme": [
+    "bulracing",
+    "bulfuzq-rn"
+  ],
   "version": "1.0.0",
   "orientation": "portrait",
   "userInterfaceStyle": "automatic",
@@ -17,6 +20,26 @@
   "android": {
     "icon": "./assets/images/app-icon-android-legacy.png",
     "package": "com.bulfuzqrn",
+    "intentFilters": [
+      {
+        "action": "VIEW",
+        "autoVerify": true,
+        "data": [
+          {
+            "scheme": "https",
+            "host": "bulfuzq.com"
+          },
+          {
+            "scheme": "https",
+            "host": "www.bulfuzq.com"
+          }
+        ],
+        "category": [
+          "BROWSABLE",
+          "DEFAULT"
+        ]
+      }
+    ],
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
       "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
@@ -27,14 +50,26 @@
     "icon": "./assets/images/app-icon-ios.png",
     "supportsTablet": true,
     "usesAppleSignIn": true,
-    "bundleIdentifier": "com.bulfuzqrn"
+    "bundleIdentifier": "com.bulfuzqrn",
+    "associatedDomains": [
+      "applinks:bulfuzq.com",
+      "applinks:www.bulfuzq.com"
+    ]
   },
   "web": {
     "favicon": "./assets/images/app-icon-web-favicon.png",
     "bundler": "metro"
   },
   "plugins": [
+    [
+      "onesignal-expo-plugin",
+      {
+        "mode": "development"
+      }
+    ],
     "expo-localization",
+    "expo-secure-store",
+    "expo-web-browser",
     "expo-font",
     [
       "expo-splash-screen",
@@ -60,7 +95,7 @@
     "tsconfigPaths": true
   },
   "extra": {
-    "ignite": {
+    "bulRacing": {
       "version": "UNKNOWN"
     },
     "eas": {

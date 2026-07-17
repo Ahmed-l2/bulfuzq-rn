@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { resolveImageUrl } from "@/services/images"
+
 import { createAuthenticatedSupabaseClient, GetClerkSupabaseToken } from "./client"
 
 export const memberEventSchema = z.object({
@@ -29,7 +31,9 @@ export async function getMemberEvents(
     .order("event_date", { ascending: true })
 
   if (error) throw error
-  return memberEventsSchema.parse(data ?? [])
+  return memberEventsSchema
+    .parse(data ?? [])
+    .map((item) => ({ ...item, image_url: resolveImageUrl(item.image_url) }))
 }
 
 export async function getMemberEventById(
@@ -44,5 +48,8 @@ export async function getMemberEventById(
     .maybeSingle()
 
   if (error) throw error
-  return data ? memberEventSchema.parse(data) : null
+  if (!data) return null
+
+  const item = memberEventSchema.parse(data)
+  return { ...item, image_url: resolveImageUrl(item.image_url) }
 }

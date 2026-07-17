@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { resolveImageUrl } from "@/services/images"
+
 import { createAuthenticatedSupabaseClient, GetClerkSupabaseToken } from "./client"
 
 export const membershipNewsItemSchema = z.object({
@@ -35,7 +37,9 @@ export async function getMembershipNews(
     .order("date", { ascending: false })
 
   if (error) throw error
-  return membershipNewsSchema.parse(data ?? [])
+  return membershipNewsSchema
+    .parse(data ?? [])
+    .map((item) => ({ ...item, image_url: resolveImageUrl(item.image_url) }))
 }
 
 export async function getMembershipNewsById(
@@ -50,7 +54,10 @@ export async function getMembershipNewsById(
     .maybeSingle()
 
   if (error) throw error
-  return data ? membershipNewsItemSchema.parse(data) : null
+  if (!data) return null
+
+  const item = membershipNewsItemSchema.parse(data)
+  return { ...item, image_url: resolveImageUrl(item.image_url) }
 }
 
 export async function getCurrentMemberAnnouncement(
@@ -73,5 +80,8 @@ export async function getCurrentMemberAnnouncement(
     .maybeSingle()
 
   if (error) throw error
-  return data ? membershipNewsItemSchema.parse(data) : null
+  if (!data) return null
+
+  const item = membershipNewsItemSchema.parse(data)
+  return { ...item, image_url: resolveImageUrl(item.image_url) }
 }
