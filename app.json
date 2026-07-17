@@ -70,6 +70,8 @@
     "expo-localization",
     "expo-secure-store",
     "expo-web-browser",
+    "expo-sharing",
+    "expo-mail-composer",
     "expo-font",
     [
       "expo-splash-screen",

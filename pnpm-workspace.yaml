@@ -6,3 +6,5 @@ allowBuilds:
   esbuild: true
   unrs-resolver: true
   utf-8-validate: true
+minimumReleaseAgeExclude:
+  - expo-camera@57.0.3

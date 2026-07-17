@@ -6,6 +6,7 @@ import {
   getCurrentMemberAnnouncement,
   getMemberEvents,
   getMembershipNews,
+  getMembershipNewsById,
   getPartnerOffers,
   getSponsors,
 } from "@/services/supabase"
@@ -27,6 +28,17 @@ export function useMembershipNews() {
     queryKey: ["membershipNews", userId],
     enabled,
     queryFn: () => getMembershipNews(() => getToken()),
+    meta: { persist: true },
+  })
+}
+
+export function useMembershipNewsItem(id: string) {
+  const { enabled, getToken, userId } = useContentQueryEnabled()
+
+  return useQuery({
+    queryKey: ["membershipNewsItem", userId, id],
+    enabled: enabled && Boolean(id),
+    queryFn: () => getMembershipNewsById(() => getToken(), id),
     meta: { persist: true },
   })
 }

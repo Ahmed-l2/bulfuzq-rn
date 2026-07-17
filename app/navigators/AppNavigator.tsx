@@ -10,9 +10,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import Config from "@/config"
 import { AccountScreen } from "@/screens/AccountScreen"
+import { AnnouncementDetailScreen } from "@/screens/AnnouncementDetailScreen"
+import { AnnouncementsScreen } from "@/screens/AnnouncementsScreen"
 import { ErrorBoundary } from "@/screens/ErrorScreen/ErrorBoundary"
 import { HomeScreen } from "@/screens/HomeScreen"
 import { LoadingScreen } from "@/screens/LoadingScreen"
+import { MembershipCardScreen } from "@/screens/MembershipCardScreen"
 import { MerchantHomeScreen } from "@/screens/MerchantHomeScreen"
 import { RoleSelectionScreen } from "@/screens/RoleSelectionScreen"
 import { SignInScreen } from "@/screens/SignInScreen"
@@ -84,6 +87,9 @@ function getRoleScreens(activeRole: ReturnType<typeof useRole>["activeRole"], ro
   return (
     <>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="MembershipCard" component={MembershipCardScreen} />
+      <Stack.Screen name="Announcements" component={AnnouncementsScreen} />
+      <Stack.Screen name="AnnouncementDetail" component={AnnouncementDetailScreen} />
       <Stack.Screen name="Account" component={AccountScreen} />
     </>
   )

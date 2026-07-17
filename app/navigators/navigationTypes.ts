@@ -8,6 +8,9 @@ export type AppStackParamList = {
   SignUp: undefined
   RoleSelection: undefined
   Home: undefined
+  MembershipCard: undefined
+  Announcements: undefined
+  AnnouncementDetail: { id: string }
   MerchantHome: undefined
   Account: undefined
 }

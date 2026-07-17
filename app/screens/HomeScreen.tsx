@@ -97,6 +97,13 @@ export const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
               heading={action.label}
               content={action.description}
               style={themed($quickAction)}
+              onPress={
+                action.id === "membership-card"
+                  ? () => navigation.navigate("MembershipCard")
+                  : action.id === "announcements"
+                    ? () => navigation.navigate("Announcements")
+                    : undefined
+              }
             />
           ))}
         </View>
@@ -106,6 +113,11 @@ export const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
         title="Announcement"
         empty="No active announcements right now."
         value={announcement?.title}
+        onPress={
+          announcement
+            ? () => navigation.navigate("AnnouncementDetail", { id: announcement.id })
+            : undefined
+        }
       />
       <DashboardPreview
         title="Upcoming Event"
@@ -149,13 +161,15 @@ function DashboardPreview({
   empty,
   title,
   value,
+  onPress,
 }: {
   detail?: string
   empty: string
+  onPress?: () => void
   title: string
   value?: string
 }) {
-  return <UICard heading={title} content={value ?? empty} footer={detail} />
+  return <UICard heading={title} content={value ?? empty} footer={detail} onPress={onPress} />
 }
 
 function getMembershipStatusText(

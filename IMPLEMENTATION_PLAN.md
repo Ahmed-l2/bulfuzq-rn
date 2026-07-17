@@ -800,24 +800,34 @@ Create the digital membership card experience.
 
 ### Completion Checklist
 
-* [ ] Premium branded card implemented.
-* [ ] Member information displayed.
-* [ ] Membership package displayed.
-* [ ] Membership status badge displayed.
-* [ ] Expiry / renewal information displayed.
-* [ ] QR code renders correctly.
-* [ ] Full-screen card view implemented.
-* [ ] Offline viewing works.
-* [ ] Sensitive membership data handled securely.
-* [ ] Card loads from Supabase.
-* [ ] Compile passes.
-* [ ] Lint passes.
-* [ ] Bundle passes.
-* [ ] Documentation updated.
+* [x] Premium branded card implemented.
+* [x] Member information displayed.
+* [x] Membership package displayed.
+* [x] Membership status badge displayed.
+* [x] Expiry / renewal information displayed.
+* [x] QR code renders correctly.
+* [x] Full-screen card view implemented.
+* [x] Offline viewing works.
+* [x] Sensitive membership data handled securely.
+* [x] Card loads from Supabase.
+* [x] Compile passes.
+* [x] Lint passes.
+* [x] Bundle passes.
+* [x] Documentation updated.
 
 ### Phase 7 Progress Notes
 
-* Not started.
+* Added `react-native-svg` and `react-native-qrcode-svg` for QR rendering.
+* Added `app/screens/MembershipCardScreen.tsx`.
+* Added `MembershipCard` to navigation types, member stack, and deep-link config.
+* Wired the member dashboard Membership Card quick action to the new screen.
+* Membership card uses the existing cached `useMembershipSummary()` query for Supabase-backed data and offline viewing after first load.
+* QR payload only includes a typed version marker and member registration ID; future server-side validation is still required before merchant scanning/check-in flows.
+* The screen handles loading, refresh errors, inactive memberships, and accounts without a membership record.
+* `pnpm run compile` passes after Phase 7 implementation.
+* `pnpm run lint:check` passes after Phase 7 implementation.
+* `pnpm run bundle:web` passes after Phase 7 implementation.
+* Generated `dist/` directory was removed after verification.
 
 ---
 
@@ -839,24 +849,37 @@ Implement the announcements experience.
 
 ### Completion Checklist
 
-* [ ] Announcement list implemented.
-* [ ] Announcement details implemented.
-* [ ] Read/unread state implemented.
-* [ ] Pull-to-refresh implemented.
-* [ ] Empty state implemented.
-* [ ] Offline cache implemented.
-* [ ] Deep linking support implemented.
-* [ ] Announcement feed loads.
-* [ ] Details open correctly.
-* [ ] Read state persists.
-* [ ] Compile passes.
-* [ ] Lint passes.
-* [ ] Bundle passes.
-* [ ] Documentation updated.
+* [x] Announcement list implemented.
+* [x] Announcement details implemented.
+* [x] Read/unread state implemented.
+* [x] Pull-to-refresh implemented.
+* [x] Empty state implemented.
+* [x] Offline cache implemented.
+* [x] Deep linking support implemented.
+* [x] Announcement feed loads.
+* [x] Details open correctly.
+* [x] Read state persists.
+* [x] Compile passes.
+* [x] Lint passes.
+* [x] Bundle passes.
+* [x] Documentation updated.
 
 ### Phase 8 Progress Notes
 
-* Not started.
+* Added `app/screens/AnnouncementsScreen.tsx`.
+* Added `app/screens/AnnouncementDetailScreen.tsx`.
+* Added `app/services/announcements/readState.ts` with MMKV-backed read-state persistence scoped by Clerk user ID.
+* Added `useMembershipNewsItem(id)` for cached announcement detail reads.
+* Added `Announcements` and `AnnouncementDetail` routes to navigation.
+* Added deep links for `news` and `news/:id`.
+* Wired dashboard Announcements quick action to the announcement list.
+* Wired the dashboard current announcement preview to open announcement details.
+* Announcement list supports pull-to-refresh, unread badges, empty state, error state, and cached offline reads.
+* Announcement details mark items as read and render cached details, image, date, and content.
+* `pnpm run compile` passes after Phase 8 implementation.
+* `pnpm run lint:check` passes after Phase 8 implementation.
+* `pnpm run bundle:web` passes after Phase 8 implementation.
+* Generated `dist/` directory was removed after verification.
 
 ---
 
