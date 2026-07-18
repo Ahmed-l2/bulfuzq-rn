@@ -13,7 +13,6 @@ import { AccountScreen } from "@/screens/AccountScreen"
 import { AnnouncementDetailScreen } from "@/screens/AnnouncementDetailScreen"
 import { AnnouncementsScreen } from "@/screens/AnnouncementsScreen"
 import { ErrorBoundary } from "@/screens/ErrorScreen/ErrorBoundary"
-import { HomeScreen } from "@/screens/HomeScreen"
 import { LoadingScreen } from "@/screens/LoadingScreen"
 import { MembershipCardScreen } from "@/screens/MembershipCardScreen"
 import { MerchantHomeScreen } from "@/screens/MerchantHomeScreen"
@@ -23,6 +22,7 @@ import { SignUpScreen } from "@/screens/SignUpScreen"
 import { useRole } from "@/services/roles"
 import { useAppTheme } from "@/theme/context"
 
+import { MemberTabNavigator } from "./MemberTabNavigator"
 import type { AppStackParamList, NavigationProps } from "./navigationTypes"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 
@@ -86,7 +86,7 @@ function getRoleScreens(activeRole: ReturnType<typeof useRole>["activeRole"], ro
 
   return (
     <>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="MemberTabs" component={MemberTabNavigator} />
       <Stack.Screen name="MembershipCard" component={MembershipCardScreen} />
       <Stack.Screen name="Announcements" component={AnnouncementsScreen} />
       <Stack.Screen name="AnnouncementDetail" component={AnnouncementDetailScreen} />

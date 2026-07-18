@@ -5,7 +5,7 @@ import type { AppStackParamList } from "./navigationTypes"
 
 const websitePrefixes = ["https://bulfuzq.com", "https://www.bulfuzq.com"]
 
-const memberHomePaths = ["events", "offers", "sponsors", "membership", "racing-team"]
+const memberHomePaths = ["offers", "sponsors", "racing-team"]
 
 export const linking: LinkingOptions<AppStackParamList> = {
   prefixes: [Linking.createURL("/"), "bulracing://", ...websitePrefixes],
@@ -14,12 +14,18 @@ export const linking: LinkingOptions<AppStackParamList> = {
       SignIn: "",
       SignUp: "sign-up",
       RoleSelection: "roles",
-      Home: "home",
+      MemberTabs: {
+        screens: {
+          Account: "account",
+          Events: "events",
+          Home: "home",
+          Membership: "membership",
+        },
+      },
       MembershipCard: "membership-card",
       Announcements: "news",
       AnnouncementDetail: "news/:id",
       MerchantHome: "merchant",
-      Account: "account",
     },
   },
   getStateFromPath(path, options) {
@@ -31,7 +37,7 @@ export const linking: LinkingOptions<AppStackParamList> = {
       )
     ) {
       return {
-        routes: [{ name: "Home" }],
+        routes: [{ name: "MemberTabs", params: { screen: "Home" } }],
       }
     }
 

@@ -77,7 +77,7 @@ export const AnnouncementsScreen: FC<AnnouncementsScreenProps> = ({ navigation }
       <Button
         preset="reversed"
         text="Back to Dashboard"
-        onPress={() => navigation.navigate("Home")}
+        onPress={() => navigation.navigate("MemberTabs", { screen: "Home" })}
       />
     </Screen>
   )

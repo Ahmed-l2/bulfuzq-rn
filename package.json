@@ -69,6 +69,7 @@
     "expo-web-browser": "~57.0.1",
     "i18next": "^23.14.0",
     "intl-pluralrules": "^2.0.1",
+    "lucide-react-native": "^1.24.0",
     "onesignal-expo-plugin": "^2.7.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",

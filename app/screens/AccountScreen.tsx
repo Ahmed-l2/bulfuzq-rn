@@ -59,9 +59,14 @@ export const AccountScreen: FC<AccountScreenProps> = ({ navigation }) => {
   )
 
   function goBackToActiveExperience() {
+    if (currentRole !== "merchant") {
+      ;(navigation as any).navigate("Home")
+      return
+    }
+
     navigation.reset({
       index: 0,
-      routes: [{ name: currentRole === "merchant" ? "MerchantHome" : "Home" }],
+      routes: [{ name: "MerchantHome" }],
     })
   }
 

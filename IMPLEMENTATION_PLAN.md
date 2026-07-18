@@ -1,3 +1,15 @@
+# Icon System
+
+Adopt `lucide-react-native` as the primary icon library for the application.
+
+Requirements:
+
+- Install `lucide-react-native`.
+- Create a reusable `UIIcon` wrapper component.
+- All newly developed screens should use `UIIcon` instead of directly importing icons.
+- Centralize icon sizing and colors so they follow the theme automatically.
+- Existing screens do not need to be migrated immediately, but all future UI should use the new icon system.
+
 # Implementation Plan Updates
 
 Apply the following architectural changes to `IMPLEMENTATION_PLAN.md` before continuing with Phase 2.
@@ -770,6 +782,250 @@ Build the primary authenticated member experience using the existing design syst
 * `pnpm run compile` passes after Phase 6 dashboard implementation.
 * `pnpm run lint:check` passes after Phase 6 dashboard implementation.
 * `pnpm run bundle:web` passes after Phase 6 dashboard implementation.
+* Generated `dist/` directory was removed after verification.
+
+---
+
+# Phase 6.1 — Home Dashboard UI Polish
+
+## Objective
+
+Redesign the existing `HomeScreen` to match the approved BUL Racing dashboard mockup while preserving the existing business logic, queries, navigation, caching, and refresh behavior.
+
+This is a UI refactor only.
+
+Do not change Supabase logic, Clerk logic, TanStack Query hooks, navigation routes, or refresh implementation.
+
+## Layout
+
+The screen should visually match the approved dashboard design.
+
+Order:
+
+* Welcome Header
+* Membership Status Card
+* Quick Actions Grid
+* Bottom Navigation
+
+Remove the generic dashboard preview cards for now:
+
+* Featured Sponsors
+* Latest Offer
+* Upcoming Event
+* Announcement
+
+Those sections will move into their dedicated screens later.
+
+## Welcome Header
+
+Replace the current hero section.
+
+Design:
+
+* Large greeting: `Hi, Ahmed`
+* Small subtitle: `Welcome back!`
+* No badge.
+* Use first name from Clerk with fallback to `Member`.
+
+## Membership Card
+
+Replace the generic `UICard`.
+
+Design:
+
+* Rounded dark card.
+* Title: `Membership`.
+* Top-right status badge: `Active` or `Inactive`.
+* Valid-until line.
+* Bottom divider.
+* Bottom row with `Member ID` and membership number from existing data.
+* Use existing membership data and active/inactive logic.
+* Do not invent data.
+
+## Quick Actions
+
+Use a 3-column grid.
+
+Each item:
+
+* Rounded square.
+* Centered icon.
+* Centered title.
+* No description text.
+
+Actions:
+
+* Membership Card
+* Announcements
+* Events
+* Offers
+* Sponsors
+* Racing Team
+
+Use existing navigation where available. Where a destination is not implemented, show disabled state or navigate to placeholder.
+
+## Icons
+
+Use vector icons through the shared `UIIcon` wrapper.
+
+Suggested icons:
+
+* Membership Card: `credit-card`
+* Announcements: `bell`
+* Events: `calendar`
+* Offers: `tag`
+* Sponsors: `shield`
+* Racing Team: `users`
+
+Do not use emoji.
+
+## Styling
+
+Follow BUL Racing branding.
+
+* Background: pure black.
+* Cards: very dark gray.
+* Accent: `#dc2626`.
+* Text: white.
+* Secondary text: gray.
+* Status badge: green.
+* Rounded corners: large.
+* Spacing: generous.
+* Minimal design.
+* No gradients.
+* No glassmorphism.
+
+## Animations
+
+Keep subtle.
+
+* Cards use press opacity or small scale animation.
+* No heavy animations.
+
+## Keep Existing
+
+Do not modify:
+
+* RefreshControl
+* Pull to refresh
+* TanStack Query
+* Offline caching
+* Role logic
+* Authentication
+* Notification registration
+* Sign out
+* Query hooks
+
+## Component Extraction
+
+Create reusable dashboard components:
+
+* `components/dashboard/MemberStatusCard.tsx`
+* `components/dashboard/QuickActionCard.tsx`
+* `components/dashboard/QuickActionsGrid.tsx`
+* `components/dashboard/WelcomeHeader.tsx`
+
+Avoid placing all JSX inside `HomeScreen`.
+
+### Completion Checklist
+
+* [x] Phase 6.1 section added to implementation plan.
+* [x] Welcome Header matches approved dashboard direction.
+* [x] Membership Status Card matches approved dashboard direction.
+* [x] Quick Actions Grid matches approved dashboard direction.
+* [x] Generic dashboard preview cards removed from HomeScreen.
+* [x] Bottom navigation area included without changing navigation routes.
+* [x] `UIIcon` wrapper created using `lucide-react-native`.
+* [x] Dashboard components extracted.
+* [x] Existing queries preserved.
+* [x] Existing refresh behavior preserved.
+* [x] Existing navigation behavior preserved.
+* [x] Existing offline cache behavior preserved.
+* [x] Compile passes.
+* [x] Lint passes.
+* [x] Bundle passes.
+* [x] Documentation updated.
+
+### Phase 6.1 Progress Notes
+
+* Installed `lucide-react-native` and added `app/components/ui/Icon.tsx` as the shared `UIIcon` wrapper.
+* Added reusable dashboard components under `app/components/dashboard/`: `WelcomeHeader`, `MemberStatusCard`, `QuickActionCard`, `QuickActionsGrid`, and `DashboardBottomNav`.
+* Refactored `HomeScreen` UI to the approved black dashboard layout while preserving the existing query hooks and pull-to-refresh function.
+* Removed generic dashboard preview cards for Announcement, Upcoming Event, Latest Offer, and Featured Sponsors from the Home dashboard.
+* Quick actions now use a 3-column icon grid with implemented navigation for Membership Card and Announcements, and disabled placeholders for Events, Offers, Sponsors, and Racing Team.
+* Membership card uses existing membership summary data only; missing membership number values render as unavailable.
+* Added a bottom navigation-style area without changing actual navigation routes.
+* `pnpm run compile` passes after Phase 6.1 UI polish.
+* `pnpm run lint:check` passes after Phase 6.1 UI polish.
+* `pnpm run bundle:web` passes after Phase 6.1 UI polish.
+* Generated `dist/` directory was removed after verification.
+
+---
+
+# Navigation Refactor — Shared Member Bottom Navigation
+
+## Objective
+
+Refactor the current navigation architecture so the Member experience uses a shared bottom tab navigator instead of rendering `DashboardBottomNav` inside `HomeScreen`.
+
+The project already has working authentication, deep linking, role management, and stack navigation. Preserve the existing navigation architecture and build on top of it.
+
+## Requirements
+
+* Audit the existing app navigator structure.
+* Preserve Clerk authentication flow.
+* Preserve role selection flow.
+* Preserve member flow behavior.
+* Preserve merchant flow behavior.
+* Create a dedicated `MemberTabNavigator`.
+* Member tabs are Home, Membership, Events, and Account.
+* Use the existing custom `DashboardBottomNav` component as the navigator custom tab bar.
+* The tab bar must be rendered by the navigator, not by individual screens.
+* Remove `DashboardBottomNav` from `HomeScreen`.
+* React Navigation should be the single source of truth for active tab state.
+* Do not manually pass active tab state from screens.
+* Non-tab screens should still push on the member stack.
+* Refactor `DashboardBottomNav` to receive React Navigation tab-bar props.
+* Preserve the current visual design.
+* Keep the tab architecture future-ready for Offers and Sponsors.
+
+### Completion Checklist
+
+* [x] Existing navigation audited.
+* [x] Authentication flow preserved.
+* [x] Role selection flow preserved.
+* [x] Member flow moved to `MemberTabNavigator`.
+* [x] Merchant flow preserved.
+* [x] Home tab implemented.
+* [x] Membership tab implemented.
+* [x] Events tab implemented.
+* [x] Account tab implemented.
+* [x] `DashboardBottomNav` refactored as custom tab bar.
+* [x] `DashboardBottomNav` removed from `HomeScreen`.
+* [x] Active tab state comes from React Navigation state.
+* [x] Non-tab screens still push normally.
+* [x] Deep links still resolve.
+* [x] Typed navigation updated.
+* [x] Compile passes.
+* [x] Lint passes.
+* [x] Bundle passes.
+* [x] Documentation updated.
+
+### Navigation Refactor Progress Notes
+
+* Confirmed the project is not using Expo Router directly; navigation is React Navigation-based.
+* Root stack still owns authentication, role selection, merchant flow, and pushed member screens.
+* Added `app/navigators/MemberTabNavigator.tsx` with Home, Membership, Events, and Account tabs.
+* Refactored `DashboardBottomNav` to consume React Navigation `BottomTabBarProps` and derive active state from `state.index`.
+* Removed page-level `DashboardBottomNav` rendering from `HomeScreen`.
+* Added `MembershipScreen` and `EventsScreen` as member tab screens.
+* Kept `MembershipCard`, `Announcements`, and `AnnouncementDetail` as pushed root stack screens.
+* Updated typed navigation with `MemberTabParamList`, `MemberTabs`, and nested tab screen props.
+* Updated deep linking so member tab paths resolve under `MemberTabs`.
+* Merchant flow remains `MerchantHome` plus root `Account`.
+* `pnpm run compile` passes after navigation refactor.
+* `pnpm run lint:check` passes after navigation refactor.
+* `pnpm run bundle:web` passes after navigation refactor.
 * Generated `dist/` directory was removed after verification.
 
 ---
