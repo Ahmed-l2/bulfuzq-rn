@@ -125,7 +125,7 @@ module.exports = {
         "section of your package.json. If this module is development only - add it to the " +
         "from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration",
       from: {
-        path: "^(app|src)",
+        path: "^src",
         pathNot: "\\.(spec|test)\\.(js|mjs|cjs|ts|tsx)$",
       },
       to: {
@@ -185,7 +185,7 @@ module.exports = {
         collapsePattern: "node_modules/(@[^/]+/[^/]+|[^/]+)",
       },
       archi: {
-        collapsePattern: "^(app|src|test)/[^/]+",
+        collapsePattern: "^(src|test)/[^/]+",
       },
       text: {
         highlightFocused: true,

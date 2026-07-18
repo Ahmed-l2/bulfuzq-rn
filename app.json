@@ -67,6 +67,7 @@
         "mode": "development"
       }
     ],
+    "expo-router",
     "expo-localization",
     "expo-secure-store",
     "expo-web-browser",

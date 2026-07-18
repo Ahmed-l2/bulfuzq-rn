@@ -58,7 +58,7 @@ Token refresh is handled by Clerk. Supabase services should request the current 
 
 - Mobile and website must use the same Clerk instance.
 - Mobile must use the same Clerk publishable key as the website environment for the target deployment.
-- The app reads the key from `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY`, falling back to `app/config/config.dev.ts` or `app/config/config.prod.ts` for the current Ignite environment.
+- The app reads the key from `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY`, falling back to `src/config/config.dev.ts` or `src/config/config.prod.ts` for the current environment.
 - Google and Apple sign-in must remain configured in Clerk, not implemented as separate mobile-only identity providers.
 - Supabase membership records continue to use Clerk user IDs.
 - The mobile app communicates directly with Supabase using Clerk authentication.
