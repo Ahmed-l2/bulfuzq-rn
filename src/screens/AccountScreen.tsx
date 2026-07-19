@@ -85,7 +85,7 @@ export const AccountScreen: FC = () => {
               key={record.id}
               preset={record.role === currentRole ? "default" : "reversed"}
               text={`${record.role === currentRole ? "●" : "○"} ${getRoleLabel(record.role)}`}
-              onPress={() => switchRole(record.role)}
+              onPress={() => handleSwitchRole(record.role)}
             />
           ))
         ) : (
@@ -104,6 +104,11 @@ export const AccountScreen: FC = () => {
 
   function goBackToActiveExperience() {
     router.replace(currentRole === "merchant" ? "/merchant" : "/")
+  }
+
+  function handleSwitchRole(role: AppRole) {
+    switchRole(role)
+    router.replace(role === "merchant" ? "/merchant" : "/(member)/(tabs)")
   }
 
   async function handleSignOut() {

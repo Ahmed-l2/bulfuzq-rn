@@ -1741,6 +1741,7 @@ Complete production notification support.
 * Added OneSignal foreground display handler.
 * Added OneSignal click handler that routes notification payloads with `route`, `url`, `deepLink`, `type: support`, or `conversation_id` to the app route, including `/account/support` for support alerts.
 * Added `AccountNotificationsScreen` and route `src/app/account/notifications.tsx` for user-facing push permission/device registration.
+* Notifications settings now reads OneSignal permission/subscription state; the enable button changes to `Push Notifications Enabled` and disables when this device is already enabled.
 * Added support unread count sync to OneSignal badge APIs when available and OneSignal user tag `support_unread_count`.
 * Notification inbox synchronization remains blocked because the current schema has `push_devices` but no notification inbox table.
 * Production push verification remains blocked until OneSignal app ID and native device builds are available.

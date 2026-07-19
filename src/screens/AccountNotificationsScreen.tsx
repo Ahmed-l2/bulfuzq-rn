@@ -2,6 +2,7 @@ import { FC, useState } from "react"
 import { Alert, Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { useRouter } from "expo-router"
 import { useAuth } from "@clerk/clerk-expo"
+import { useQuery } from "@tanstack/react-query"
 
 import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
@@ -19,6 +20,15 @@ export const AccountNotificationsScreen: FC = () => {
   const { themed } = useAppTheme()
   const supportUnreadQuery = useSupportUnreadSummary()
   const [isRequesting, setIsRequesting] = useState(false)
+  const notificationStatusQuery = useQuery({
+    queryKey: ["notificationStatus"],
+    queryFn: async () => {
+      if (hasOneSignalConfig) NotificationService.initialize((url) => router.push(url as never))
+      return NotificationService.getStatus()
+    },
+  })
+  const notificationStatus = notificationStatusQuery.data
+  const areNotificationsEnabled = Boolean(notificationStatus?.enabled)
 
   return (
     <Screen
@@ -48,16 +58,24 @@ export const AccountNotificationsScreen: FC = () => {
         <Text preset="subheading" text="Push Status" style={themed($title)} />
         <Text
           text={
-            hasOneSignalConfig
-              ? "Push notifications are configured for this build."
-              : "Push notifications need EXPO_PUBLIC_ONESIGNAL_APP_ID before they can be enabled."
+            areNotificationsEnabled
+              ? "Push notifications are enabled on this device."
+              : hasOneSignalConfig
+                ? "Push notifications are configured for this build."
+                : "Push notifications need EXPO_PUBLIC_ONESIGNAL_APP_ID before they can be enabled."
           }
           style={themed($body)}
         />
         <Button
-          text={isRequesting ? "Enabling..." : "Enable Push Notifications"}
+          text={
+            isRequesting
+              ? "Enabling..."
+              : areNotificationsEnabled
+                ? "Push Notifications Enabled"
+                : "Enable Push Notifications"
+          }
           onPress={enablePushNotifications}
-          disabled={!hasOneSignalConfig || isRequesting}
+          disabled={!hasOneSignalConfig || isRequesting || areNotificationsEnabled}
         />
       </View>
 
@@ -89,6 +107,7 @@ export const AccountNotificationsScreen: FC = () => {
           ? "This device is registered for push notifications."
           : "Permission or native push registration is not complete yet.",
       )
+      await notificationStatusQuery.refetch()
     } catch (error) {
       Alert.alert("Unable to enable notifications", getErrorMessage(error))
     } finally {

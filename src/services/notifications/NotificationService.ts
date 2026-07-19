@@ -10,6 +10,14 @@ export interface NotificationRegistrationInput {
   memberId: string
 }
 
+export type NotificationStatus = {
+  configured: boolean
+  enabled: boolean
+  initialized: boolean
+  permission: boolean
+  subscriptionId: string | null
+}
+
 class NotificationServiceImpl {
   private initialized = false
   private handlersRegistered = false
@@ -46,6 +54,43 @@ class NotificationServiceImpl {
   async requestPermission() {
     if (!this.initialized) return false
     return OneSignal.Notifications.requestPermission(true)
+  }
+
+  async getStatus(): Promise<NotificationStatus> {
+    if (!hasOneSignalConfig || Platform.OS === "web") {
+      return {
+        configured: hasOneSignalConfig,
+        enabled: false,
+        initialized: this.initialized,
+        permission: false,
+        subscriptionId: null,
+      }
+    }
+
+    const subscriptionId = this.initialized
+      ? await OneSignal.User.pushSubscription.getIdAsync()
+      : null
+    const notifications = OneSignal.Notifications as unknown as {
+      getPermissionAsync?: () => Promise<boolean>
+      permission?: boolean
+    }
+    const pushSubscription = OneSignal.User.pushSubscription as unknown as {
+      getOptedInAsync?: () => Promise<boolean>
+    }
+    const permission = notifications.getPermissionAsync
+      ? await notifications.getPermissionAsync()
+      : Boolean(notifications.permission)
+    const optedIn = pushSubscription.getOptedInAsync
+      ? await pushSubscription.getOptedInAsync()
+      : true
+
+    return {
+      configured: true,
+      enabled: Boolean(permission && subscriptionId && optedIn),
+      initialized: this.initialized,
+      permission,
+      subscriptionId,
+    }
   }
 
   async registerDevice(input: NotificationRegistrationInput) {
