@@ -138,32 +138,6 @@ export const AccountSupportScreen: FC = () => {
                 style={themed($body)}
               />
             ) : null}
-            <TextField
-              value={messageText}
-              onChangeText={setMessageText}
-              placeholder="Write your message..."
-              multiline
-              editable={canSend && !sendMessage.isPending}
-              inputWrapperStyle={themed($inputWrapper)}
-              style={themed($input)}
-            />
-            <View style={themed($attachmentActions)}>
-              <Pressable
-                accessibilityRole="button"
-                onPress={pickImageAttachment}
-                style={themed($attachmentButton)}
-              >
-                <Text size="xs" weight="medium" text="Add Image" style={themed($linkText)} />
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                onPress={pickDocumentAttachment}
-                style={themed($attachmentButton)}
-              >
-                <Text size="xs" weight="medium" text="Add File" style={themed($linkText)} />
-              </Pressable>
-              <Text size="xxs" text="PDF, JPG, PNG, WEBP up to 2.5 MB" style={themed($muted)} />
-            </View>
             {selectedAttachment ? (
               <View style={themed($selectedAttachment)}>
                 <Text
@@ -177,12 +151,56 @@ export const AccountSupportScreen: FC = () => {
                 </Pressable>
               </View>
             ) : null}
-            <Button
-              text={sendMessage.isPending ? "Sending..." : "Send Message"}
-              onPress={handleSendMessage}
-              disabled={
-                (!messageText.trim() && !selectedAttachment) || !canSend || sendMessage.isPending
-              }
+            <View style={themed($composerRow)}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Attach image"
+                onPress={pickImageAttachment}
+                style={({ pressed }) => [themed($iconButton), pressed && themed($pressed)]}
+              >
+                <Text size="lg" text="+" style={themed($iconButtonText)} />
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Attach file"
+                onPress={pickDocumentAttachment}
+                style={({ pressed }) => [themed($iconButton), pressed && themed($pressed)]}
+              >
+                <Text size="xs" weight="bold" text="PDF" style={themed($iconButtonText)} />
+              </Pressable>
+              <TextField
+                value={messageText}
+                onChangeText={setMessageText}
+                placeholder="Message..."
+                multiline
+                editable={canSend && !sendMessage.isPending}
+                containerStyle={themed($inputContainer)}
+                inputWrapperStyle={themed($inputWrapper)}
+                style={themed($input)}
+              />
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Send message"
+                onPress={handleSendMessage}
+                disabled={
+                  (!messageText.trim() && !selectedAttachment) || !canSend || sendMessage.isPending
+                }
+                style={({ pressed }) => [
+                  themed($sendButton),
+                  ((!messageText.trim() && !selectedAttachment) ||
+                    !canSend ||
+                    sendMessage.isPending) &&
+                    themed($sendButtonDisabled),
+                  pressed && themed($pressed),
+                ]}
+              >
+                <Text size="lg" weight="bold" text="→" style={themed($sendButtonText)} />
+              </Pressable>
+            </View>
+            <Text
+              size="xxs"
+              text="PDF, JPG, PNG, WEBP up to 2.5 MB"
+              style={themed($composerHint)}
             />
           </View>
         </View>
@@ -481,21 +499,24 @@ const $messagesContent: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 const $composer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   borderTopColor: "#171717",
   borderTopWidth: 1,
-  gap: spacing.sm,
-  padding: spacing.md,
+  gap: spacing.xs,
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm,
 })
-const $attachmentActions: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $composerRow: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   alignItems: "center",
   flexDirection: "row",
-  flexWrap: "wrap",
-  gap: spacing.sm,
+  gap: spacing.xs,
 })
-const $attachmentButton: ThemedStyle<ViewStyle> = ({ radius, spacing }) => ({
-  backgroundColor: "rgba(225, 6, 0, 0.12)",
+const $iconButton: ThemedStyle<ViewStyle> = ({ radius }) => ({
+  alignItems: "center",
+  backgroundColor: "#171717",
   borderRadius: radius.round,
-  paddingHorizontal: spacing.md,
-  paddingVertical: spacing.xs,
+  height: 34,
+  justifyContent: "center",
+  width: 34,
 })
+const $iconButtonText: ThemedStyle<TextStyle> = () => ({ color: "#E10600" })
 const $selectedAttachment: ThemedStyle<ViewStyle> = ({ radius, spacing }) => ({
   alignItems: "center",
   backgroundColor: "#111516",
@@ -505,19 +526,38 @@ const $selectedAttachment: ThemedStyle<ViewStyle> = ({ radius, spacing }) => ({
   flexDirection: "row",
   gap: spacing.md,
   justifyContent: "space-between",
-  padding: spacing.sm,
+  paddingHorizontal: spacing.sm,
+  paddingVertical: spacing.xs,
 })
-const $inputWrapper: ThemedStyle<ViewStyle> = ({ radius }) => ({
+const $inputContainer: ThemedStyle<ViewStyle> = () => ({ flex: 1 })
+const $inputWrapper: ThemedStyle<ViewStyle> = ({ radius, spacing }) => ({
   backgroundColor: "#111516",
   borderColor: "#262626",
-  borderRadius: radius.lg,
-  minHeight: 96,
+  borderRadius: radius.round,
+  minHeight: 42,
+  paddingHorizontal: spacing.sm,
 })
 const $input: ThemedStyle<TextStyle> = ({ typography }) => ({
   color: "#ffffff",
   fontFamily: typography.primary.normal,
+  maxHeight: 92,
+  minHeight: 24,
   textAlignVertical: "top",
 })
+const $sendButton: ThemedStyle<ViewStyle> = ({ radius }) => ({
+  alignItems: "center",
+  backgroundColor: "#E10600",
+  borderRadius: radius.round,
+  height: 38,
+  justifyContent: "center",
+  width: 38,
+})
+const $sendButtonDisabled: ThemedStyle<ViewStyle> = () => ({
+  backgroundColor: "#262626",
+  opacity: 0.65,
+})
+const $sendButtonText: ThemedStyle<TextStyle> = () => ({ color: "#ffffff", lineHeight: 24 })
+const $composerHint: ThemedStyle<TextStyle> = () => ({ color: "#525252", paddingLeft: 76 })
 const $customerBubble: ThemedStyle<ViewStyle> = ({ radius, spacing }) => ({
   alignSelf: "flex-end",
   backgroundColor: "#E10600",
